@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anotações GigU 3.2</title>
+<style>
+    :root {
+        --bg: #f5f5f5;
+        --card: #fff;
+        --text: #222;
+        --border: #ddd;
+        --accent: #673ab7;
+        --btn: #000;
+    }
+    body.dark {
+        --bg: #181818;
+        --card: #242424;
+        --text: #f1f1f1;
+        --border: #444;
+        --btn: #ddd;
+    }
+    body {
+        font-family: Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 20px;
+        transition: all 0.3s ease;
+    }
+    h1 { text-align: center; color: var(--text); }
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: var(--card);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: background 0.3s;
+    }
+    .top-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    input#search {
+        flex: 1;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        font-size: 14px;
+    }
+    .theme-btn, .export-btn, .restore-btn {
+        background: var(--btn);
+        color: var(--bg);
+        border: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .topic {
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        margin-bottom: 15px;
+        padding: 15px;
+        background: var(--card);
+    }
+    .topic-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .topic-header h2 {
+        margin: 0;
+        font-size: 18px;
+        color: var(--text);
+        cursor: pointer;
+    }
+    .topic-content {
+        margin-top: 10px;
+        display: none;
+    }
+    .item {
+        border: 1px solid var(--border);
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        background: var(--bg);
+    }
+    .item textarea, .item input {
+        width: 100%;
+        border: none;
+        background: #f9f9f9;
+        color: #222;
+        padding: 8px;
+        border-radius: 6px;
+        margin-top: 4px;
+        font-size: 15px;
+    }
+    body.dark .item textarea, body.dark .item input {
+        background: #333;
+        color: #eee;
+    }
+    .buttons {
+        margin-top: 8px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    button {
+        cursor: pointer;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #fff;
+    }
+    .copy-btn { background: #4CAF50; }
+    .edit-btn { background: #2196F3; }
+    .delete-btn { background: #f44336; }
+    .add-link-btn { background: var(--accent); margin-top: 10px; width: 100%; }
+    .add-topic-btn { background: var(--btn); color: var(--bg); margin-top: 20px; width: 100%; padding: 10px; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📚 Links e Tutoriais GigU 3.2</h1>
+    
+    <div class="top-bar">
+        <input type="text" id="search" placeholder="🔍 Buscar por descrição, link ou título..." oninput="filterTopics()">
+        <button class="theme-btn" onclick="toggleTheme()">🌙 Modo Escuro</button>
+        <button class="export-btn" onclick="exportTxt()">💾 Exportar TXT</button>
+        <button class="restore-btn" onclick="restoreBackup()">🔁 Restaurar Backup</button>
+    </div>
+
+    <div id="topics"></div>
+    <button class="add-topic-btn" onclick="addTopic()">➕ Adicionar Novo Tópico</button>
+</div>
+
+<script>
+let topics = JSON.parse(localStorage.getItem('giguTopicsV3_2')) || [
+    {
+        title: "📱 GigU - Instalação e Configuração",
+        links: [
+            {desc: "Instalação completa", link: "https://youtu.be/SLByHrnDWrA?si=XL3uNXXvDy7NhmAC"},
+            {desc: "Reinstalação", link: "https://youtu.be/YAtLkGpjwKc?si=kY5_VgoLkPmLNxgX"}
+        ]
+    }
+];
+
+let darkMode = localStorage.getItem('darkMode') === 'true';
+
+function renderTopics() {
+    const container = document.getElementById('topics');
+    container.innerHTML = "";
+    topics.forEach((topic, tIndex) => {
+        const topicDiv = document.createElement('div');
+        topicDiv.className = 'topic';
+
+        topicDiv.innerHTML = `
+            <div class="topic-header">
+                <h2 onclick="toggleTopic(${tIndex})">${topic.title}</h2>
+                <div class="buttons">
+                    <button class="edit-btn" onclick="event.stopPropagation(); editTopic(${tIndex})">Editar Título</button>
+                    <button class="delete-btn" onclick="event.stopPropagation(); deleteTopic(${tIndex})">Excluir Tópico</button>
+                </div>
+            </div>
+            <div class="topic-content" id="topic-content-${tIndex}">
+                ${topic.links.map((item, iIndex) => `
+                    <div class="item">
+                        <textarea id="desc-${tIndex}-${iIndex}" placeholder="Descrição">${item.desc}</textarea>
+                        <input type="text" id="link-${tIndex}-${iIndex}" value="${item.link}" placeholder="Link">
+                        <div class="buttons">
+                            <button class="copy-btn" onclick="copyItem(${tIndex}, ${iIndex})">Copiar</button>
+                            <button class="edit-btn" onclick="editItem(${tIndex}, ${iIndex})">Salvar</button>
+                            <button class="delete-btn" onclick="deleteItem(${tIndex}, ${iIndex})">Excluir</button>
+                        </div>
+                    </div>
+                `).join('')}
+                <button class="add-link-btn" onclick="addItem(${tIndex})">+ Adicionar Link</button>
+            </div>
+        `;
+        container.appendChild(topicDiv);
+    });
+}
+
+function toggleTopic(index) {
+    const content = document.getElementById(`topic-content-${index}`);
+    content.style.display = content.style.display === "none" || !content.style.display ? "block" : "none";
+}
+
+function copyItem(tIndex, iIndex) {
+    const desc = document.getElementById(`desc-${tIndex}-${iIndex}`).value;
+    const link = document.getElementById(`link-${tIndex}-${iIndex}`).value;
+    navigator.clipboard.writeText(`${desc}\n${link}`);
+    alert("Descrição e link copiados!");
+}
+
+function editItem(tIndex, iIndex) {
+    const desc = document.getElementById(`desc-${tIndex}-${iIndex}`).value;
+    const link = document.getElementById(`link-${tIndex}-${iIndex}`).value;
+    topics[tIndex].links[iIndex] = {desc, link};
+    save();
+}
+
+function deleteItem(tIndex, iIndex) {
+    if (confirm("Excluir este link?")) {
+        topics[tIndex].links.splice(iIndex, 1);
+        save();
+    }
+}
+
+function addItem(tIndex) {
+    const desc = prompt("Descrição:");
+    const link = prompt("Link:");
+    if (desc && link) {
+        topics[tIndex].links.push({desc, link});
+        save();
+    }
+}
+
+function addTopic() {
+    const title = prompt("Título do novo tópico:");
+    if (title) {
+        topics.push({ title, links: [] });
+        save();
+    }
+}
+
+function editTopic(tIndex) {
+    const newTitle = prompt("Novo título do tópico:", topics[tIndex].title);
+    if (newTitle && newTitle.trim() !== "") {
+        topics[tIndex].title = newTitle.trim();
+        save();
+    }
+}
+
+function deleteTopic(index) {
+    if (confirm("Excluir este tópico e seus links?")) {
+        topics.splice(index, 1);
+        save();
+    }
+}
+
+function filterTopics() {
+    const term = document.getElementById("search").value.toLowerCase();
+    document.querySelectorAll(".topic").forEach(t => {
+        const text = t.innerText.toLowerCase();
+        t.style.display = text.includes(term) ? "block" : "none";
+    });
+}
+
+function toggleTheme() {
+    darkMode = !darkMode;
+    document.body.classList.toggle("dark", darkMode);
+    localStorage.setItem("darkMode", darkMode);
+}
+
+function exportTxt(auto = false) {
+    let content = "";
+    topics.forEach(topic => {
+        content += `${topic.title}\n\n`;
+        topic.links.forEach(link => {
+            content += `${link.desc}\n${link.link}\n\n`;
+        });
+    });
+    const blob = new Blob([content], {type: "text/plain"});
+    const url = URL.createObjectURL(blob);
+    if (!auto) {
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Anotações GigU - Backup.txt";
+        a.click();
+    } else {
+        localStorage.setItem("backupTxt", content);
+    }
+}
+
+function restoreBackup() {
+    const backupTxt = localStorage.getItem("backupTxt");
+    if (!backupTxt) {
+        alert("Nenhum backup encontrado no navegador!");
+        return;
+    }
+    if (confirm("Deseja restaurar o backup salvo anteriormente? Isso substituirá os dados atuais.")) {
+        const lines = backupTxt.split("\n").filter(l => l.trim() !== "");
+        const newTopics = [];
+        let currentTopic = null;
+        for (let i = 0; i < lines.length; i++) {
+            if (!lines[i].startsWith("http") && !lines[i - 1]?.startsWith("http")) {
+                if (currentTopic) newTopics.push(currentTopic);
+                currentTopic = { title: lines[i], links: [] };
+            } else if (lines[i].startsWith("http") && currentTopic) {
+                const desc = lines[i - 1] || "";
+                const link = lines[i];
+                currentTopic.links.push({ desc, link });
+            }
+        }
+        if (currentTopic) newTopics.push(currentTopic);
+        topics = newTopics;
+        save();
+        alert("Backup restaurado com sucesso!");
+    }
+}
+
+function save() {
+    localStorage.setItem("giguTopicsV3_2", JSON.stringify(topics));
+    exportTxt(true);
+    renderTopics();
+}
+
+window.addEventListener("beforeunload", () => exportTxt(true));
+
+document.body.classList.toggle("dark", darkMode);
+renderTopics();
+</script>
+
+</body>
+</html>
