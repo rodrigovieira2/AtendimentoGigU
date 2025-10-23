@@ -1,323 +1,618 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anotações GigU 3.2</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Anotações GigU — Seguro (Client-side)</title>
 <style>
-    :root {
-        --bg: #f5f5f5;
-        --card: #fff;
-        --text: #222;
-        --border: #ddd;
-        --accent: #673ab7;
-        --btn: #000;
-    }
-    body.dark {
-        --bg: #181818;
-        --card: #242424;
-        --text: #f1f1f1;
-        --border: #444;
-        --btn: #ddd;
-    }
-    body {
-        font-family: Arial, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        margin: 0;
-        padding: 20px;
-        transition: all 0.3s ease;
-    }
-    h1 { text-align: center; color: var(--text); }
-    .container {
-        max-width: 900px;
-        margin: 0 auto;
-        background: var(--card);
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        transition: background 0.3s;
-    }
-    .top-bar {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 15px;
-        flex-wrap: wrap;
-        justify-content: space-between;
-    }
-    input#search {
-        flex: 1;
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid var(--border);
-        font-size: 14px;
-    }
-    .theme-btn, .export-btn, .restore-btn {
-        background: var(--btn);
-        color: var(--bg);
-        border: none;
-        padding: 8px 14px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-    .topic {
-        border: 2px solid var(--border);
-        border-radius: 10px;
-        margin-bottom: 15px;
-        padding: 15px;
-        background: var(--card);
-    }
-    .topic-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-    .topic-header h2 {
-        margin: 0;
-        font-size: 18px;
-        color: var(--text);
-        cursor: pointer;
-    }
-    .topic-content {
-        margin-top: 10px;
-        display: none;
-    }
-    .item {
-        border: 1px solid var(--border);
-        padding: 10px;
-        margin-bottom: 8px;
-        border-radius: 8px;
-        background: var(--bg);
-    }
-    .item textarea, .item input {
-        width: 100%;
-        border: none;
-        background: #f9f9f9;
-        color: #222;
-        padding: 8px;
-        border-radius: 6px;
-        margin-top: 4px;
-        font-size: 15px;
-    }
-    body.dark .item textarea, body.dark .item input {
-        background: #333;
-        color: #eee;
-    }
-    .buttons {
-        margin-top: 8px;
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-    button {
-        cursor: pointer;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 14px;
-        color: #fff;
-    }
-    .copy-btn { background: #4CAF50; }
-    .edit-btn { background: #2196F3; }
-    .delete-btn { background: #f44336; }
-    .add-link-btn { background: var(--accent); margin-top: 10px; width: 100%; }
-    .add-topic-btn { background: var(--btn); color: var(--bg); margin-top: 20px; width: 100%; padding: 10px; font-size: 15px; }
+  :root{
+    --bg:#f5f5f5; --card:#fff; --text:#222; --border:#ddd; --accent:#673ab7; --btn:#000;
+  }
+  body.dark{ --bg:#121212; --card:#1e1e1e; --text:#eee; --border:#333; --btn:#ddd; }
+  body{font-family:Inter, Arial, Helvetica, sans-serif;background:var(--bg);color:var(--text);margin:0;padding:20px;}
+  .center{max-width:1024px;margin:0 auto;}
+  .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.08);border:1px solid var(--border);}
+  h1{text-align:center;margin:0 0 12px 0;}
+  /* Login */
+  #loginWrap{display:flex;gap:20px;align-items:flex-start;justify-content:center;height:80vh;}
+  .loginCard{width:380px;padding:18px;}
+  label{display:block;margin-top:10px;font-size:13px;}
+  input[type="text"], input[type="password"], input[type="file"], textarea{width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);margin-top:6px;background:#fafafa;}
+  button{cursor:pointer;border:0;padding:8px 12px;border-radius:8px;font-weight:600;}
+  .primary{background:var(--accent);color:#fff;}
+  .danger{background:#f44336;color:#fff;}
+  .muted{background:#888;color:#fff;}
+  .topBar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .flex{display:flex;gap:10px;align-items:center;}
+  .small{font-size:13px;color:#666;}
+  .topic{border:1px solid var(--border);padding:12px;border-radius:10px;margin-bottom:12px;background:var(--card);}
+  .topic-header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+  .buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  .item{border:1px solid var(--border);padding:8px;border-radius:8px;margin-top:8px;background:var(--bg);}
+  textarea{min-height:44px;}
+  .userInfo{font-size:13px;color:#444;}
+  .userList{max-height:220px;overflow:auto;border:1px solid var(--border);padding:8px;border-radius:8px;margin-top:8px;background:var(--bg);}
+  .userRow{display:flex;justify-content:space-between;align-items:center;padding:6px;border-bottom:1px dashed var(--border);}
+  .note{font-size:13px;color:#555;margin-top:8px;}
+  .footer{font-size:13px;color:#666;text-align:center;margin-top:14px;}
+  @media(max-width:900px){
+    #loginWrap{flex-direction:column;padding:12px;height:auto;}
+    .loginCard{width:100%;}
+  }
 </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>📚 Links e Tutoriais GigU 3.2</h1>
-    
-    <div class="top-bar">
-        <input type="text" id="search" placeholder="🔍 Buscar por descrição, link ou título..." oninput="filterTopics()">
-        <button class="theme-btn" onclick="toggleTheme()">🌙 Modo Escuro</button>
-        <button class="export-btn" onclick="exportTxt()">💾 Exportar TXT</button>
-        <button class="restore-btn" onclick="restoreBackup()">🔁 Restaurar Backup</button>
+<div class="center card" id="app">
+  <h1>📚 Anotações GigU — Painel Seguro (client-side)</h1>
+
+  <!-- LOGIN / APP -->
+  <div id="loginUI">
+    <div id="loginWrap">
+      <div class="loginCard card">
+        <h3>Entrar</h3>
+        <label>Usuário</label>
+        <input id="loginUser" type="text" placeholder="seu.usuario">
+        <label>Senha</label>
+        <input id="loginPass" type="password" placeholder="Senha">
+        <div style="margin-top:12px;display:flex;gap:8px;">
+          <button class="primary" onclick="handleLogin()">Entrar</button>
+          <button class="muted" onclick="showSetup()">Primeiro acesso / Criar Admin</button>
+        </div>
+        <p class="small" style="margin-top:10px;">Se for o primeiro uso, clique em <b>Primeiro acesso</b> para criar o Admin.</p>
+      </div>
+
+      <div class="loginCard card" id="helpCard">
+        <h3>Sobre segurança</h3>
+        <p class="small">As senhas são derivadas (PBKDF2 + SHA-256) e armazenadas como hash + salt no navegador. Isso aumenta segurança em relação a texto simples, mas **não substitui** um servidor seguro. Use este painel para controle local ou hospedagem estática com acesso controlado.</p>
+        <p class="small"><b>Recomendação:</b> mantenha cópias externas fazendo export (Backup TXT).</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="mainUI" style="display:none;">
+    <div class="topBar">
+      <div class="flex">
+        <input id="search" placeholder="🔍 Buscar por descrição, link ou título..." oninput="filterTopics()" style="padding:8px;border-radius:8px;border:1px solid var(--border);min-width:300px;">
+        <button class="primary" onclick="exportTxt()">💾 Exportar TXT</button>
+        <button onclick="exportTxt(true)">🔁 Gerar backup (salva internamente)</button>
+        <button class="muted" onclick="restoreBackup()">🔁 Restaurar backup</button>
+      </div>
+      <div class="flex">
+        <span class="userInfo" id="currentUserDisplay"></span>
+        <button class="muted" onclick="toggleTheme()">🌓 Tema</button>
+        <button class="danger" onclick="handleLogout()">Sair</button>
+      </div>
     </div>
 
-    <div id="topics"></div>
-    <button class="add-topic-btn" onclick="addTopic()">➕ Adicionar Novo Tópico</button>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:360px;">
+        <div style="margin-bottom:10px;">
+          <button class="primary" onclick="addTopic()">➕ Adicionar Tópico</button>
+        </div>
+
+        <div id="topics"></div>
+      </div>
+
+      <div style="width:320px;">
+        <div class="card" style="padding:12px;">
+          <h3>Administração</h3>
+          <div id="adminControls" style="display:none;">
+            <div style="margin-top:8px;">
+              <label>Adicionar usuário</label>
+              <input id="newUserName" placeholder="login" />
+              <input id="newUserPass" placeholder="senha" type="password" style="margin-top:6px;" />
+              <div style="margin-top:8px;">
+                <button class="primary" onclick="adminAddUser()">Adicionar</button>
+              </div>
+              <p class="small note">Senha: mínimo 8 caracteres, número, e pelo menos 1 letra maiúscula.</p>
+            </div>
+
+            <div style="margin-top:10px;">
+              <label>Usuários existentes</label>
+              <div class="userList" id="userList"></div>
+            </div>
+          </div>
+
+          <div id="nonAdminNote" style="display:none;">
+            <p class="small">Você não é Admin. Somente Admin pode gerenciar usuários.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px;padding:12px;">
+          <h4>Backups armazenados</h4>
+          <div id="backupInfo" class="small" style="white-space:pre-wrap"></div>
+          <div style="margin-top:8px;">
+            <input type="file" id="importFile" accept=".txt" />
+            <div style="margin-top:8px;">
+              <button class="muted" onclick="importFromFile()">Importar .txt (restaurar)</button>
+              <button onclick="downloadStoredBackup()">Baixar backup interno</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">Dica: para mais segurança em produção, peça para eu montar um backend simples (Node/Express) com autenticação real.</div>
+  </div>
 </div>
 
 <script>
-let topics = JSON.parse(localStorage.getItem('giguTopicsV3_2')) || [
-    {
-        title: "📱 GigU - Instalação e Configuração",
-        links: [
-            {desc: "Instalação completa", link: "https://youtu.be/SLByHrnDWrA?si=XL3uNXXvDy7NhmAC"},
-            {desc: "Reinstalação", link: "https://youtu.be/YAtLkGpjwKc?si=kY5_VgoLkPmLNxgX"}
-        ]
+/*
+  Anotações GigU — Autenticação client-side (v3_auth)
+  - Usa Web Crypto API (PBKDF2 + SHA-256) para derivar hash de senha
+  - Armazena users em localStorage: key 'giguUsers' -> [{user, saltHex, hashHex, role}]
+  - Topics stored under 'giguTopicsSecure'
+  - Backup txt stored in 'backupTxtSecure'
+*/
+
+/* ---------- helpers crypto ---------- */
+const enc = new TextEncoder();
+
+function toHex(buffer){
+  const bytes = new Uint8Array(buffer);
+  return Array.from(bytes).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+function fromHex(hex){
+  if(!hex) return new Uint8Array();
+  const bytes = new Uint8Array(hex.length/2);
+  for(let i=0;i<bytes.length;i++) bytes[i]=parseInt(hex.substr(i*2,2),16);
+  return bytes;
+}
+
+async function deriveHash(password, saltHex){
+  const salt = fromHex(saltHex);
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
+  const derived = await crypto.subtle.deriveBits({
+    name:'PBKDF2',
+    hash:'SHA-256',
+    salt: salt,
+    iterations: 120000
+  }, keyMaterial, 256);
+  return toHex(derived);
+}
+function genSaltHex(len=16){
+  const arr = crypto.getRandomValues(new Uint8Array(len));
+  return toHex(arr);
+}
+
+/* ---------- storage helpers ---------- */
+function loadUsers(){ return JSON.parse(localStorage.getItem('giguUsers')||'[]'); }
+function saveUsers(u){ localStorage.setItem('giguUsers', JSON.stringify(u)); }
+function loadTopics(){ return JSON.parse(localStorage.getItem('giguTopicsSecure')||'[]'); }
+function saveTopics(t){ localStorage.setItem('giguTopicsSecure', JSON.stringify(t)); }
+function saveBackupTxt(txt){ localStorage.setItem('backupTxtSecure', txt); }
+function getBackupTxt(){ return localStorage.getItem('backupTxtSecure'); }
+
+/* ---------- UI state ---------- */
+let currentUser = null; // {user, role}
+let topics = loadTopics();
+
+/* ---------- password policy ---------- */
+function validatePasswordPolicy(p){
+  if(!p) return false;
+  if(p.length < 8) return false;
+  if(!/[0-9]/.test(p)) return false;
+  if(!/[A-Z]/.test(p)) return false;
+  return true;
+}
+
+/* ---------- initial admin setup ---------- */
+async function showSetup(){
+  const users = loadUsers();
+  if(users.length>0){
+    alert('Já existe conta(s). Para criar Admin, faça logout e use a tela de criação de usuário pelo Admin.');
+    return;
+  }
+  const name = prompt('Criar conta Admin - usuário (ex: admin):','admin');
+  if(!name) return;
+  while(true){
+    const pw = prompt('Criar senha do Admin (mín 8; números; 1 maiúscula no mínimo):');
+    if(pw===null) return;
+    if(!validatePasswordPolicy(pw)){
+      alert('Senha inválida. Deve ter no mínimo 8 caracteres, conter número e pelo menos 1 letra maiúscula.');
+      continue;
     }
-];
+    const salt = genSaltHex();
+    const hash = await deriveHash(pw, salt);
+    const userObj = { user: name.trim(), saltHex: salt, hashHex: hash, role: 'admin' };
+    saveUsers([userObj]);
+    alert('Admin criado com sucesso. Faça login com o usuário criado.');
+    return;
+  }
+}
 
-let darkMode = localStorage.getItem('darkMode') === 'true';
+/* ---------- login / logout ---------- */
+async function handleLogin(){
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if(!u || !p){ alert('Preencha usuário e senha.'); return; }
+  const users = loadUsers();
+  const found = users.find(x=>x.user === u);
+  if(!found){ alert('Usuário não encontrado.'); return; }
+  const hash = await deriveHash(p, found.saltHex);
+  if(hash === found.hashHex){
+    currentUser = { user: found.user, role: found.role };
+    enterApp();
+  } else {
+    alert('Senha incorreta.');
+  }
+}
+function handleLogout(){
+  if(confirm('Deseja sair?')) {
+    currentUser = null;
+    document.getElementById('mainUI').style.display='none';
+    document.getElementById('loginUI').style.display='block';
+  }
+}
 
-function renderTopics() {
-    const container = document.getElementById('topics');
-    container.innerHTML = "";
-    topics.forEach((topic, tIndex) => {
-        const topicDiv = document.createElement('div');
-        topicDiv.className = 'topic';
+/* ---------- admin features ---------- */
+async function adminAddUser(){
+  if(!isAdmin()) return;
+  const name = document.getElementById('newUserName').value.trim();
+  const pw = document.getElementById('newUserPass').value;
+  if(!name || !pw){ alert('Preencha usuário e senha'); return; }
+  if(!validatePasswordPolicy(pw)){ alert('Senha não atende a política'); return; }
+  const users = loadUsers();
+  if(users.find(x=>x.user===name)){ alert('Usuário já existe'); return; }
+  const salt = genSaltHex();
+  const hash = await deriveHash(pw, salt);
+  users.push({ user: name, saltHex: salt, hashHex: hash, role: 'user' });
+  saveUsers(users);
+  document.getElementById('newUserName').value='';
+  document.getElementById('newUserPass').value='';
+  renderUserList();
+  alert('Usuário criado.');
+}
+function adminDeleteUser(userName){
+  if(!isAdmin()) return;
+  if(!confirm('Excluir usuário '+userName+'?')) return;
+  let users = loadUsers();
+  users = users.filter(u=>u.user!==userName);
+  saveUsers(users);
+  renderUserList();
+}
 
-        topicDiv.innerHTML = `
-            <div class="topic-header">
-                <h2 onclick="toggleTopic(${tIndex})">${topic.title}</h2>
-                <div class="buttons">
-                    <button class="edit-btn" onclick="event.stopPropagation(); editTopic(${tIndex})">Editar Título</button>
-                    <button class="delete-btn" onclick="event.stopPropagation(); deleteTopic(${tIndex})">Excluir Tópico</button>
-                </div>
+/* ---------- enter app ---------- */
+function enterApp(){
+  document.getElementById('loginUI').style.display='none';
+  document.getElementById('mainUI').style.display='block';
+  document.getElementById('currentUserDisplay').innerText = `${currentUser.user} (${currentUser.role})`;
+  // show admin controls if admin
+  document.getElementById('adminControls').style.display = isAdmin() ? 'block' : 'none';
+  document.getElementById('nonAdminNote').style.display = isAdmin() ? 'none' : 'block';
+  renderUserList();
+  renderTopics();
+  showBackupInfo();
+}
+
+/* ---------- user list rendering ---------- */
+function renderUserList(){
+  const cont = document.getElementById('userList');
+  cont.innerHTML = '';
+  const users = loadUsers();
+  users.forEach(u=>{
+    const row = document.createElement('div');
+    row.className='userRow';
+    row.innerHTML = `<div>${u.user} ${u.role==='admin'?'<strong>(admin)</strong>':''}</div>
+      <div>
+        ${ (u.user !== currentUser.user) ? `<button class="danger" onclick="adminDeleteUser('${u.user}')">Excluir</button>` : '' }
+      </div>`;
+    cont.appendChild(row);
+  });
+}
+
+/* ---------- topics UI (same features as before) ---------- */
+function renderTopics(){
+  topics = loadTopics();
+  const container = document.getElementById('topics');
+  container.innerHTML = '';
+  topics.forEach((topic, tIndex)=>{
+    const div = document.createElement('div');
+    div.className='topic';
+    div.innerHTML = `
+      <div class="topic-header">
+        <div style="flex:1">
+          <h3 style="margin:0;cursor:pointer;" onclick="toggleTopic(${tIndex})">${topic.title}</h3>
+        </div>
+        <div class="buttons" style="gap:6px;">
+          ${ isAdmin() ? `<button class="edit-btn" onclick="editTopic(${tIndex})">Editar Título</button>` : '' }
+          <button class="muted" onclick="toggleTopic(${tIndex})">Abrir/Fechar</button>
+          ${ isAdmin() ? `<button class="danger" onclick="deleteTopic(${tIndex})">Excluir Tópico</button>` : '' }
+        </div>
+      </div>
+      <div class="topic-content" id="topic-content-${tIndex}" style="display:none;">
+        ${ topic.links.map((item, iIndex)=>`
+          <div class="item">
+            <textarea id="desc-${tIndex}-${iIndex}">${escapeHtml(item.desc)}</textarea>
+            <input id="link-${tIndex}-${iIndex}" value="${escapeHtml(item.link)}" />
+            <div class="buttons">
+              <button class="primary" onclick="copyItem(${tIndex},${iIndex})">Copiar</button>
+              ${ isAdmin() ? `<button class="edit-btn" onclick="editItem(${tIndex},${iIndex})">Salvar</button>
+                <button class="danger" onclick="deleteItem(${tIndex},${iIndex})">Excluir</button>` : '' }
             </div>
-            <div class="topic-content" id="topic-content-${tIndex}">
-                ${topic.links.map((item, iIndex) => `
-                    <div class="item">
-                        <textarea id="desc-${tIndex}-${iIndex}" placeholder="Descrição">${item.desc}</textarea>
-                        <input type="text" id="link-${tIndex}-${iIndex}" value="${item.link}" placeholder="Link">
-                        <div class="buttons">
-                            <button class="copy-btn" onclick="copyItem(${tIndex}, ${iIndex})">Copiar</button>
-                            <button class="edit-btn" onclick="editItem(${tIndex}, ${iIndex})">Salvar</button>
-                            <button class="delete-btn" onclick="deleteItem(${tIndex}, ${iIndex})">Excluir</button>
-                        </div>
-                    </div>
-                `).join('')}
-                <button class="add-link-btn" onclick="addItem(${tIndex})">+ Adicionar Link</button>
-            </div>
-        `;
-        container.appendChild(topicDiv);
+          </div>
+        `).join('')}
+        ${ isAdmin() ? `<button class="primary" onclick="addItem(${tIndex})">+ Adicionar Link</button>` : '' }
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+/* simple html escape */
+function escapeHtml(s){ return s ? s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;') : ''; }
+
+function toggleTopic(i){
+  const el = document.getElementById(`topic-content-${i}`);
+  if(!el) return;
+  el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
+}
+
+/* actions (only admin allowed for edit/add/delete) */
+function isAdmin(){ return currentUser && currentUser.role === 'admin'; }
+
+function copyItem(t,i){
+  const desc = document.getElementById(`desc-${t}-${i}`).value;
+  const link = document.getElementById(`link-${t}-${i}`).value;
+  navigator.clipboard.writeText(`${desc}\n${link}`);
+  alert('Descrição e link copiados!');
+}
+function editItem(t,i){
+  if(!isAdmin()){ alert('Somente Admin pode salvar alterações.'); return; }
+  const desc = document.getElementById(`desc-${t}-${i}`).value;
+  const link = document.getElementById(`link-${t}-${i}`).value;
+  topics[t].links[i] = { desc, link };
+  saveTopics(topics);
+  renderTopics();
+}
+function deleteItem(t,i){
+  if(!isAdmin()){ alert('Somente Admin pode excluir.'); return; }
+  if(!confirm('Excluir este link?')) return;
+  topics[t].links.splice(i,1);
+  saveTopics(topics);
+  renderTopics();
+}
+function addItem(t){
+  if(!isAdmin()){ alert('Somente Admin pode adicionar links.'); return; }
+  const desc = prompt('Descrição:');
+  const link = prompt('Link:');
+  if(!desc||!link) return;
+  topics[t].links.push({desc,link});
+  saveTopics(topics);
+  renderTopics();
+}
+function addTopic(){
+  if(!isAdmin()){ alert('Somente Admin pode adicionar tópicos.'); return; }
+  const title = prompt('Título do novo tópico:');
+  if(!title) return;
+  topics.push({ title, links: [] });
+  saveTopics(topics);
+  renderTopics();
+}
+function editTopic(t){
+  if(!isAdmin()){ alert('Somente Admin pode renomear tópicos.'); return; }
+  const nt = prompt('Novo título:', topics[t].title);
+  if(!nt) return;
+  topics[t].title = nt;
+  saveTopics(topics);
+  renderTopics();
+}
+function deleteTopic(t){
+  if(!isAdmin()){ alert('Somente Admin pode excluir tópicos.'); return; }
+  if(!confirm('Excluir tópico e todos os links?')) return;
+  topics.splice(t,1);
+  saveTopics(topics);
+  renderTopics();
+}
+
+/* ---------- backup/export/import ---------- */
+function exportTxt(auto=false){
+  let content = '';
+  topics.forEach(topic=>{
+    content += topic.title + '\n\n';
+    topic.links.forEach(l=>{
+      content += l.desc + '\n' + l.link + '\n\n';
     });
+  });
+  if(auto){
+    saveBackupTxt(content);
+    showBackupInfo();
+    return;
+  }
+  const blob = new Blob([content],{type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Anotacoes-GigU-Backup.txt';
+  a.click();
 }
-
-function toggleTopic(index) {
-    const content = document.getElementById(`topic-content-${index}`);
-    content.style.display = content.style.display === "none" || !content.style.display ? "block" : "none";
+function saveBackupTxt(content){
+  saveBackupTxt; // noop to avoid lint
+  saveBackupTxt = null;
+  // use storage helper
 }
-
-function copyItem(tIndex, iIndex) {
-    const desc = document.getElementById(`desc-${tIndex}-${iIndex}`).value;
-    const link = document.getElementById(`link-${tIndex}-${iIndex}`).value;
-    navigator.clipboard.writeText(`${desc}\n${link}`);
-    alert("Descrição e link copiados!");
-}
-
-function editItem(tIndex, iIndex) {
-    const desc = document.getElementById(`desc-${tIndex}-${iIndex}`).value;
-    const link = document.getElementById(`link-${tIndex}-${iIndex}`).value;
-    topics[tIndex].links[iIndex] = {desc, link};
-    save();
-}
-
-function deleteItem(tIndex, iIndex) {
-    if (confirm("Excluir este link?")) {
-        topics[tIndex].links.splice(iIndex, 1);
-        save();
-    }
-}
-
-function addItem(tIndex) {
-    const desc = prompt("Descrição:");
-    const link = prompt("Link:");
-    if (desc && link) {
-        topics[tIndex].links.push({desc, link});
-        save();
-    }
-}
-
-function addTopic() {
-    const title = prompt("Título do novo tópico:");
-    if (title) {
-        topics.push({ title, links: [] });
-        save();
-    }
-}
-
-function editTopic(tIndex) {
-    const newTitle = prompt("Novo título do tópico:", topics[tIndex].title);
-    if (newTitle && newTitle.trim() !== "") {
-        topics[tIndex].title = newTitle.trim();
-        save();
-    }
-}
-
-function deleteTopic(index) {
-    if (confirm("Excluir este tópico e seus links?")) {
-        topics.splice(index, 1);
-        save();
-    }
-}
-
-function filterTopics() {
-    const term = document.getElementById("search").value.toLowerCase();
-    document.querySelectorAll(".topic").forEach(t => {
-        const text = t.innerText.toLowerCase();
-        t.style.display = text.includes(term) ? "block" : "none";
+function exportTxt(auto=false){ /* override earlier to call helper */ }
+(function(){
+  // rebind exportTxt to proper function which also sets backup storage
+  window.exportTxt = function(auto=false){
+    let content = '';
+    topics.forEach(topic=>{
+      content += topic.title + '\n\n';
+      topic.links.forEach(l=>{
+        content += l.desc + '\n' + l.link + '\n\n';
+      });
     });
-}
-
-function toggleTheme() {
-    darkMode = !darkMode;
-    document.body.classList.toggle("dark", darkMode);
-    localStorage.setItem("darkMode", darkMode);
-}
-
-function exportTxt(auto = false) {
-    let content = "";
-    topics.forEach(topic => {
-        content += `${topic.title}\n\n`;
-        topic.links.forEach(link => {
-            content += `${link.desc}\n${link.link}\n\n`;
-        });
-    });
-    const blob = new Blob([content], {type: "text/plain"});
+    if(auto){
+      saveBackupTxtToStorage(content);
+      showBackupInfo();
+      return;
+    }
+    const blob = new Blob([content],{type:'text/plain'});
     const url = URL.createObjectURL(blob);
-    if (!auto) {
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "Anotações GigU - Backup.txt";
-        a.click();
-    } else {
-        localStorage.setItem("backupTxt", content);
-    }
-}
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Anotacoes-GigU-Backup.txt';
+    a.click();
+  };
+  function saveBackupTxtToStorage(txt){
+    saveBackupTxt(txt);
+  }
+})();
 
-function restoreBackup() {
-    const backupTxt = localStorage.getItem("backupTxt");
-    if (!backupTxt) {
-        alert("Nenhum backup encontrado no navegador!");
-        return;
-    }
-    if (confirm("Deseja restaurar o backup salvo anteriormente? Isso substituirá os dados atuais.")) {
-        const lines = backupTxt.split("\n").filter(l => l.trim() !== "");
-        const newTopics = [];
-        let currentTopic = null;
-        for (let i = 0; i < lines.length; i++) {
-            if (!lines[i].startsWith("http") && !lines[i - 1]?.startsWith("http")) {
-                if (currentTopic) newTopics.push(currentTopic);
-                currentTopic = { title: lines[i], links: [] };
-            } else if (lines[i].startsWith("http") && currentTopic) {
-                const desc = lines[i - 1] || "";
-                const link = lines[i];
-                currentTopic.links.push({ desc, link });
-            }
-        }
-        if (currentTopic) newTopics.push(currentTopic);
-        topics = newTopics;
-        save();
-        alert("Backup restaurado com sucesso!");
-    }
-}
+/* implement saveBackupTxt properly */
+function saveBackupTxt(txt){ localStorage.setItem('backupTxtSecure', txt); }
 
-function save() {
-    localStorage.setItem("giguTopicsV3_2", JSON.stringify(topics));
-    exportTxt(true);
+/* restore backup (from internal backupTxtSecure) */
+function restoreBackup(){
+  const b = getBackupTxt();
+  if(!b){ alert('Nenhum backup interno encontrado.'); return; }
+  if(!confirm('Restaurar backup interno (substitui dados atuais)?')) return;
+  const parsed = parseBackupTxt(b);
+  if(parsed) {
+    topics = parsed;
+    saveTopics(topics);
     renderTopics();
+    alert('Backup restaurado.');
+  } else alert('Formato do backup inválido.');
 }
 
-window.addEventListener("beforeunload", () => exportTxt(true));
+/* parse backup .txt format (the same produced by exportTxt) */
+function parseBackupTxt(txt){
+  // Expected: Title\n\nDesc\nLink\n\nDesc\nLink\n\nTitle2...
+  const lines = txt.split(/\r?\n/);
+  const result = [];
+  let cur = null;
+  for(let i=0;i<lines.length;i++){
+    const line = lines[i].trim();
+    if(line==='') continue;
+    // if next non-empty line exists and not a URL, treat as title
+    // heuristic: Titles often have non-http and no 'https'? We assume original format: Title then blankline then desc/link pairs.
+    if(!cur){
+      cur = { title: line, links: [] };
+      continue;
+    }
+    // otherwise expect desc then link
+    const desc = line;
+    // find next non-empty line for link
+    let j=i+1;
+    while(j<lines.length && lines[j].trim()==='') j++;
+    if(j>=lines.length) break;
+    const link = lines[j].trim();
+    cur.links.push({ desc, link });
+    i = j; // advance
+    // peek next non-empty to decide if next is a title: if it is not starting with http maybe it's title
+    // but simpler: if next non-empty line is followed by another non-empty that looks like URL, it will be processed as desc/link.
+    // when we encounter a line that has no following URL, we'll treat it as title in next iteration
+    // if next line after j+1 is missing or is not URL, we need to close cur and set cur = null
+    // this heuristic is imperfect but OK for our exported format.
+    // check next candidate:
+    let k = j+1;
+    while(k<lines.length && lines[k].trim()==='') k++;
+    if(k>=lines.length){ result.push(cur); cur = null; break; }
+    // if lines[k] doesn't look like a valid link (starting with http) treat it as title
+    if(!/^https?:\/\//i.test(lines[k].trim())){
+      result.push(cur);
+      cur = null;
+      // i will advance normally
+    } else {
+      // continue, next iteration will set desc=lines[k]
+    }
+  }
+  if(cur) result.push(cur);
+  return result.length ? result : null;
+}
 
-document.body.classList.toggle("dark", darkMode);
-renderTopics();
+/* import from file (.txt) */
+function importFromFile(){
+  const f = document.getElementById('importFile').files[0];
+  if(!f){ alert('Selecione um arquivo .txt'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const txt = e.target.result;
+    const parsed = parseBackupTxt(txt);
+    if(!parsed){ alert('Formato inválido.'); return; }
+    if(!confirm('Restaurar arquivo importado (substitui dados atuais)?')) return;
+    topics = parsed;
+    saveTopics(topics);
+    renderTopics();
+    alert('Importação concluída.');
+  };
+  reader.readAsText(f,'utf-8');
+}
+
+/* download stored backup */
+function downloadStoredBackup(){
+  const b = getBackupTxt();
+  if(!b){ alert('Nenhum backup interno salvo.'); return; }
+  const blob = new Blob([b],{type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Anotacoes-GigU-Backup-Interno.txt';
+  a.click();
+}
+
+/* show backup info */
+function showBackupInfo(){
+  const info = document.getElementById('backupInfo');
+  const b = getBackupTxt();
+  if(!b){ info.innerText = 'Nenhum backup interno gerado ainda.'; return; }
+  const len = b.length;
+  info.innerText = `Backup interno salvo (tamanho ${len} bytes). Use "Baixar backup interno" para obter o arquivo .txt.`;
+}
+
+/* ---------- save topics wrapper that also generates auto backup ---------- */
+function saveTopics(t){
+  saveTopicsLocal(t);
+  // auto backup
+  const content = buildExportContent(t);
+  saveBackupTxt(content);
+  showBackupInfo();
+}
+function saveTopicsLocal(t){ localStorage.setItem('giguTopicsSecure', JSON.stringify(t)); }
+
+/* build content string used for export/backup */
+function buildExportContent(t){
+  let content = '';
+  t.forEach(topic=>{
+    content += topic.title + '\n\n';
+    topic.links.forEach(l=>{
+      content += l.desc + '\n' + l.link + '\n\n';
+    });
+  });
+  return content;
+}
+
+/* ---------- utility: filter topics ---------- */
+function filterTopics(){
+  const term = document.getElementById('search').value.trim().toLowerCase();
+  document.querySelectorAll('.topic').forEach(node=>{
+    const txt = node.innerText.toLowerCase();
+    node.style.display = txt.includes(term) ? '' : 'none';
+  });
+}
+
+/* ---------- theme ---------- */
+function toggleTheme(){ document.body.classList.toggle('dark'); localStorage.setItem('darkMode',(document.body.classList.contains('dark'))?'true':'false'); }
+
+/* ---------- before unload auto backup ---------- */
+window.addEventListener('beforeunload', ()=> {
+  const content = buildExportContent(loadTopics());
+  saveBackupTxt(content);
+});
+
+/* ---------- bootstrap: show login or create admin prompt if no users ---------- */
+(function init(){
+  const users = loadUsers();
+  if(!users || users.length===0){
+    // force admin setup prompt to ensure admin exists
+    setTimeout(()=> {
+      if(confirm('Nenhuma conta encontrada. Deseja criar a conta Admin agora? (recomendado)')) showSetup();
+    },200);
+  }
+  // if dark mode previously set
+  if(localStorage.getItem('darkMode')==='true') document.body.classList.add('dark');
+})();
 </script>
 
 </body>
